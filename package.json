@@ -28,6 +28,7 @@
     "packages/remix-react",
     "packages/remix-serve",
     "packages/remix-server-runtime",
+    "packages/remix-test",
     "packages/remix-vercel"
   ],
   "dependencies": {

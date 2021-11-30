@@ -76,6 +76,11 @@ function useRemixEntryContext(): RemixEntryContextType {
   return context;
 }
 
+export let __DO_NOT_USE_THIS_OR_YOU_WILL_BE_FIRED = {
+  RemixEntryContext,
+  useRemixEntryContext
+};
+
 export function RemixEntry({
   context: entryContext,
   action,

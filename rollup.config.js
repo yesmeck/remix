@@ -548,6 +548,70 @@ function remixReact() {
 }
 
 /** @type {import("rollup").RollupOptions[]} */
+function remixTest() {
+  let SOURCE_DIR = "packages/remix-test";
+  let OUTPUT_DIR = "build/node_modules/@remix-run/test";
+  let version = getVersion(SOURCE_DIR);
+
+  /** @type {import("rollup").RollupOptions} */
+  // This CommonJS build of remix-test is for node; both for use in running our
+  // server and for 3rd party tools that work with node.
+  let remixTestNode = {
+    external(id) {
+      return isBareModuleId(id);
+    },
+    input: `${SOURCE_DIR}/index.tsx`,
+    output: {
+      banner: createBanner("@remix-run/test", version),
+      dir: OUTPUT_DIR,
+      format: "cjs",
+      preserveModules: true,
+      exports: "auto"
+    },
+    plugins: [
+      babel({
+        babelHelpers: "bundled",
+        exclude: /node_modules/,
+        extensions: [".ts", ".tsx"]
+      }),
+      nodeResolve({ extensions: [".ts", ".tsx"] }),
+      copy({
+        targets: [
+          { src: `LICENSE.md`, dest: OUTPUT_DIR },
+          { src: `${SOURCE_DIR}/package.json`, dest: OUTPUT_DIR },
+          { src: `${SOURCE_DIR}/README.md`, dest: OUTPUT_DIR }
+        ]
+      })
+    ]
+  };
+
+  // The browser build of remix-test is ESM so we can treeshake it.
+  /** @type {import("rollup").RollupOptions} */
+  let remixTestBrowser = {
+    external(id) {
+      return isBareModuleId(id);
+    },
+    input: `${SOURCE_DIR}/index.tsx`,
+    output: {
+      banner: createBanner("@remix-run/test", version),
+      dir: `${OUTPUT_DIR}/browser`,
+      format: "esm",
+      preserveModules: true
+    },
+    plugins: [
+      babel({
+        babelHelpers: "bundled",
+        exclude: /node_modules/,
+        extensions: [".ts", ".tsx"]
+      }),
+      nodeResolve({ extensions: [".ts", ".tsx"] })
+    ]
+  };
+
+  return [remixTestNode, remixTestBrowser];
+}
+
+/** @type {import("rollup").RollupOptions[]} */
 function remixServe() {
   let SOURCE_DIR = "packages/remix-serve";
   let OUTPUT_DIR = "build/node_modules/@remix-run/serve";
@@ -614,6 +678,7 @@ export default function rollup(options) {
     ...remixCloudflareWorkers(options),
     ...remixServerAdapters(options),
     ...remixReact(options),
+    ...remixTest(options),
     ...remixServe(options)
   ];
 

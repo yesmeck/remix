@@ -37,7 +37,8 @@ export {
   useLoaderData,
   useActionData,
   useBeforeUnload,
-  useMatches
+  useMatches,
+  __DO_NOT_USE_THIS_OR_YOU_WILL_BE_FIRED
 } from "./components";
 
 export type { FormMethod, FormEncType } from "./data";
