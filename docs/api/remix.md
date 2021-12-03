@@ -235,7 +235,7 @@ export default function Invoices() {
 
 The most common use-case for this hook is form validation errors. If the form isn't right, you can simply return the errors and let the user try again (instead of pushing all the errors into sessions and back out of the loader).
 
-```tsx [19, 28, 36, 40-42]
+```tsx [21, 30, 38-40, 44-46]
 import { redirect, json, Form, useActionData } from "remix";
 
 export async function action({ request }) {
@@ -273,13 +273,15 @@ export default function Signup() {
       <Form method="post">
         <p>
           <input type="text" name="email" />
-          {errors?.email && <span>{errors.email}</span>}
+          {errors?.email ? (
+            <span>{errors.email}</span>
+          ) : null}
         </p>
         <p>
           <input type="text" name="password" />
-          {errors?.password && (
+          {errors?.password ? (
             <span>{errors.password}</span>
-          )}
+          ) : null}
         </p>
         <p>
           <button type="submit">Sign up</button>
@@ -399,9 +401,9 @@ function UserPreferences() {
         <input type="checkbox" name="darkMode" value="on" />{" "}
         Dark Mode
       </label>
-      {transition.state === "submitting" && (
+      {transition.state === "submitting" ? (
         <p>Saving...</p>
-      )}
+      ) : null}
     </Form>
   );
 }
@@ -553,9 +555,8 @@ This tells you what the next location is going to be. Its most useful when match
 
 For example, this `Link` knows when it's page is loading and it's about to become active:
 
-```tsx [7-9]
-import { useResolvedPath } from "react-router-dom";
-import { Link } from "remix";
+```tsx [6-8]
+import { Link, useResolvedPath } from "remix";
 
 function PendingLink({ to, children }) {
   const transition = useTransition();
@@ -632,12 +633,7 @@ You can know the state of the fetcher with `fetcher.state`, it will be one of:
 
 - **idle** - nothing is being fetched
 - **submitting** - A form has been submitted. If the method is GET then the route loader is being called, if POST, PUT, PATCH, or DELETE then the route action is being called.
-- **loading** - The loaders for the routes are being reloaded after an action submission 
-
-
-
-
-
+- **loading** - The loaders for the routes are being reloaded after an action submission
 
 .
 
@@ -755,12 +751,13 @@ function NewsletterSignup() {
         </button>
       </p>
 
-      {newsletter.type === "done" &&
-        (newsletter.data.ok ? (
+      {newsletter.type === "done" ? (
+        newsletter.data.ok ? (
           <p>Thanks for subscribing!</p>
         ) : newsletter.data.error ? (
           <p data-error>{newsletter.data.error}</p>
-        ) : null)}
+        ) : null
+      ) : null}
     </newsletter.Form>
   );
 }
@@ -1316,7 +1313,7 @@ Of course, you can do redirects without this helper if you'd rather build it up 
 return redirect("/else/where", 303);
 
 // ...for this
-return new Response("", {
+return new Response(null, {
   status: 303,
   headers: {
     Location: "/else/where"

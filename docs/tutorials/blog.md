@@ -679,7 +679,9 @@ export default function Admin() {
         <ul>
           {posts.map(post => (
             <li key={post.slug}>
-              <Link to={`/posts/${post.slug}`}>{post.title}</Link>
+              <Link to={`/posts/${post.slug}`}>
+                {post.title}
+              </Link>
             </li>
           ))}
         </ul>
@@ -872,13 +874,8 @@ Notice we don't return a redirect this time, we actually return the errors. Thes
 
 💿 Add validation messages to the UI
 
-```tsx filename=app/routes/admin/new.tsx lines=[2,17-18,24-25,30-31]
-import {
-  useActionData,
-  Form,
-  redirect,
-  ActionFunction
-} from 'remix';
+```tsx filename=app/routes/admin/new.tsx lines=[1,12-15,21-22,27-30]
+import { useActionData, Form, redirect } from "remix";
 
 // ...
 
@@ -890,20 +887,24 @@ export default function NewPost() {
       <p>
         <label>
           Post Title:{" "}
-          {errors?.title && <em>Title is required</em>}
+          {errors?.title ? (
+            <em>Title is required</em>
+          ) : null}
           <input type="text" name="title" />
         </label>
       </p>
       <p>
         <label>
           Post Slug:{" "}
-          {errors?.slug && <em>Slug is required</em>}
+          {errors?.slug ? <em>Slug is required</em> : null}
           <input type="text" name="slug" />
         </label>
       </p>
       <p>
         <label htmlFor="markdown">Markdown:</label>{" "}
-        {errors?.markdown && <em>Markdown is required</em>}
+        {errors?.markdown ? (
+          <em>Markdown is required</em>
+        ) : null}
         <br />
         <textarea rows={20} name="markdown" />
       </p>
@@ -925,10 +926,10 @@ type PostError = {
   title?: boolean;
   slug?: boolean;
   markdown?: boolean;
-}
+};
 
 export const action: ActionFunction = async ({
-  request,
+  request
 }) => {
   // ...
 
